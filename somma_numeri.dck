@@ -1,0 +1,23 @@
+prntnl_"somma numeri (termina con -1)"
+
+=_somma_0
+
+:loopinserimento
+
+prnt_"inserisci il prossimo numero: "
+input_key_NUMBER
+
+==_NUMBER_-1_fineprogramma
++_somma_somma_NUMBER
+goto_loopinserimento
+
+:fineprogramma
+prnt_"LA SOMMA E: '
+prntnl_somma
+
+
+
+
+
+
+

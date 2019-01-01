@@ -1,0 +1,13 @@
+#input_textfile_LISTA_prova.txt
+list_create_LISTA_10,2,6,111,433,2,4
+
+[ITERATOR LISTA]
+prntnl_[CURRENT]
+[END ITERATOR]
+
+
+
+
+
+
+
