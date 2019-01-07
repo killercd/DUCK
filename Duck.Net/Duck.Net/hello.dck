@@ -1,0 +1,14 @@
+list_create_LISTA_10,2,6,111,433,2,4
+=_FACT_1
+
+[ITERATOR LISTA]
+*_FACT_FACT_[CURRENT]
+[END ITERATOR]
+prntnl_FACT
+
+
+
+
+
+
+
