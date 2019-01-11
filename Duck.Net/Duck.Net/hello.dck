@@ -1,14 +1,18 @@
-list_create_LISTA_10,2,6,111,433,2,4
-=_FACT_1
+prntnl_"Inserisci una sequenza di numeri terminata da -1"
+list_create_LIST
 
-[ITERATOR LISTA]
-*_FACT_FACT_[CURRENT]
+:readnum
+input_key_NUM
+==_NUM_-1_exitprog
+list_add_LIST_NUM
+goto_readnum
+
+
+:exitprog
+=_SOMMA_0
+[ITERATOR LIST]
++_SOMMA_SOMMA_[CURRENT]
 [END ITERATOR]
-prntnl_FACT
 
-
-
-
-
-
-
+prnt_"La somma è: "
+prnt_SOMMA

@@ -21,9 +21,8 @@ namespace Duck.Net
         {
             if (string.IsNullOrEmpty(str))
                 return false;
-
-            Regex regex = new Regex(@"^\d+$");
-            return regex.IsMatch(str);
+            int intrev;
+            return Int32.TryParse(str, out intrev);
         }
     }
 }

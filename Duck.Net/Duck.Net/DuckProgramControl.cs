@@ -44,8 +44,9 @@ namespace Duck.Net
                     String labelName = string.Empty;
                     labelName = catchLabel(line);
                     if (!string.IsNullOrEmpty(labelName))
-                        this.LabelList[line] = counter;
+                        this.LabelList[labelName] = counter;
                     this.LineList.Add(line);
+                    counter++;
                 }
 
                 file.Close();
@@ -286,10 +287,11 @@ namespace Duck.Net
 
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
-                int line = Int32.Parse(istruction[1]);
-                if (line > 0)
-                    return line;
+                if (Helper.isNumber(istruction[1]))
+                    return Int32.Parse(istruction[1]);
 
+
+                
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
                 return this.LabelList[istruction[1]];
 
