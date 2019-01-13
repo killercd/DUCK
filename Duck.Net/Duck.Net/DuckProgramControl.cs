@@ -35,19 +35,35 @@ namespace Duck.Net
 
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
-                String line = "";
+               
                 System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                int counter = 0;
-                while ((line = file.ReadLine()) != null)
-                {
+                
 
-                    String labelName = string.Empty;
-                    labelName = catchLabel(line);
-                    if (!string.IsNullOrEmpty(labelName))
-                        this.LabelList[labelName] = counter;
-                    this.LineList.Add(line);
-                    counter++;
+
+                Tokenizer lexer = new Tokenizer(file);
+                while(lexer.nextLine())
+                {
+                    Token actualToken = lexer.getNextToken();
+                    while (actualToken != Token.NEWLINE)
+                    {
+                        Console.Write("{"+actualToken.ToString()+"}");
+                        actualToken = lexer.getNextToken();
+                    }
+                    Console.WriteLine("");
                 }
+                Console.WriteLine("FINE PROGRAMMA");
+
+
+                //while ((line = file.ReadLine()) != null)
+                //{
+
+                //    String labelName = string.Empty;
+                //    labelName = catchLabel(line);
+                //    if (!string.IsNullOrEmpty(labelName))
+                //        this.LabelList[labelName] = counter;
+                //    this.LineList.Add(line);
+                //    counter++;
+                //}
 
                 file.Close();
 
