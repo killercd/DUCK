@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Duck.Net
 {
-    public enum Token
+
+    public enum TokenName
     {
         LEFT_CIRCLE_BRACKET,
         RIGHT_CIRCLE_BRACKET,
@@ -36,32 +37,46 @@ namespace Duck.Net
         STRING,
         NUMBER,
         VAR,
-        ENDIF
+        ENDIF,
+        UNKNOWN,
+        MINUS,
+        MINUSMINUS
     }
-    //class Token
-    //{
-
-    //    public Dictionary<String, Symbol> TokenList;
-
-    //    public Token()
-    //    {
-    //        this.TokenList = new Dictionary<String, Symbol>();
-    //        TokenList.Add("(",Symbol.LEFT_CIRCLE_BRACKET);
-    //        TokenList.Add(")",Symbol.RIGHT_CIRCLE_BRACKET);
-    //        TokenList.Add("=",Symbol.ASSIGN);
-    //        TokenList.Add("==",Symbol.EQUALS);
-    //        TokenList.Add("IF",Symbol.IF);
-    //        TokenList.Add("THEN",Symbol.THEN);
-    //        TokenList.Add("ELSE",Symbol.ELSE);
-    //        TokenList.Add("ELSE IF",Symbol.ELSEIF);
-    //        TokenList.Add("OR", Symbol.OR);
-    //        TokenList.Add("AND", Symbol.AND);
-    //        TokenList.Add("NOT", Symbol.NOT);
-    //        TokenList.Add(" ", Symbol.SPACE);
-    //    }
+    public enum TokenType
+    {
+        TERMINAL,
+        OPERATOR,
+        CONTROL,
+        NO_TOKEN,
+        SYMBOL,
+        VAR
+    }
 
 
-    //}
+    public class Token
+    {
+
+        
+        
+
+        public TokenName Name { get; set;}
+        public TokenType Type { get; set; }
+        public String Value { get; set; }
+
+        public Token()
+        {
+            this.Name = TokenName.UNKNOWN;
+            this.Type = TokenType.NO_TOKEN;
+        }
+        public Token(TokenName name, TokenType type)
+        {
+            this.Name = name;
+            this.Type = type;
+        }
+    }
+
+   
+ 
     class Tokenizer
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -70,13 +85,13 @@ namespace Duck.Net
         public int Cursor { get; set; }
         public String ActualLine { get; set; }
         public StreamReader Stream { get; set; }
-        public String Value { get; set; }
+        
         public Tokenizer(StreamReader source)
         {
             this.Cursor = 0;
             this.Stream = source;
             ActualLine = string.Empty;
-            Value = string.Empty;
+           
         }
         public bool nextLine()
         {
@@ -116,127 +131,131 @@ namespace Duck.Net
                     if (catchExpression(line.Substring(Cursor), @"^(if(\s+))"))
                     {
                         Cursor += 2;
-                        return Token.IF;
+                        return new Token(TokenName.IF, TokenType.CONTROL);
+                       
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(then(\s*))$"))
                     {
                         Cursor += 4;
-                        return Token.THEN;
+                        return new Token(TokenName.THEN, TokenType.CONTROL);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(else if(\s+))"))
                     {
                         Cursor += 6;
-                        return Token.ELSEIF;
+                        return new Token(TokenName.ELSEIF, TokenType.CONTROL);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(else(\s*))$"))
                     {
                         Cursor += 4;
-                        return Token.ELSE;
+                        return new Token(TokenName.ELSE, TokenType.CONTROL);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(end if(\s*))$"))
                     {
                         Cursor += 6;
-                        return Token.ENDIF;
+                        return new Token(TokenName.ENDIF, TokenType.CONTROL);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\()"))
                     {
                         Cursor++;
-                        return Token.LEFT_CIRCLE_BRACKET;
+                        return new Token(TokenName.LEFT_CIRCLE_BRACKET, TokenType.SYMBOL);
                     }
 
 
                     else if (catchExpression(line.Substring(Cursor), @"^(\))"))
                     {
                         Cursor++;
-                        return Token.RIGHT_CIRCLE_BRACKET;
+                        return new Token(TokenName.RIGHT_CIRCLE_BRACKET, TokenType.SYMBOL);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\=\=)"))
                     {
                         Cursor += 2;
-                        return Token.EQUALS;
+                        return new Token(TokenName.EQUALS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\!\=)"))
                     {
                         Cursor += 2;
-                        return Token.NOTEQUALS;
+                        return new Token(TokenName.NOTEQUALS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\>\=)"))
                     {
                         Cursor += 2;
-                        return Token.MAJOREQUALS;
+                        return new Token(TokenName.MAJOREQUALS, TokenType.OPERATOR);
                     }
 
                     else if (catchExpression(line.Substring(Cursor), @"^(\<\=)"))
                     {
                         Cursor += 2;
-                        return Token.MINOREQUALS;
+                        return new Token(TokenName.MINOREQUALS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\+\+)"))
                     {
                         Cursor += 2;
-                        return Token.PLUSPLUS;
+                        return new Token(TokenName.PLUSPLUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\-\-)"))
                     {
                         Cursor += 2;
-                        return Token.MINORMINOR;
+                        return new Token(TokenName.MINUSMINUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\>)"))
                     {
                         Cursor++;
-                        return Token.MAJOR;
+                        return new Token(TokenName.MAJOR, TokenType.OPERATOR);
                     }
-                    else if (catchExpression(line.Substring(Cursor), @"^(\>)"))
-                    {
-                        Cursor++;
-                        return Token.MAJOR;
-                    }
+                   
                     else if (catchExpression(line.Substring(Cursor), @"^(\<)"))
                     {
                         Cursor++;
-                        return Token.MINOR;
+                        return new Token(TokenName.MINOR, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\+)"))
                     {
                         Cursor++;
-                        return Token.PLUS;
+                        return new Token(TokenName.PLUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\-)"))
                     {
                         Cursor++;
-                        return Token.PLUS;
+                        return new Token(TokenName.MINUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\=)"))
                     {
                         Cursor++;
-                        return Token.ASSIGN;
+                        return new Token(TokenName.ASSIGN, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\s)"))
                     {
                         Cursor++;
-                        return Token.SPACE;
+                        return new Token(TokenName.SPACE, TokenType.SYMBOL);
                     }
                     else if (catchExpression(line.Substring(Cursor), "^(\".*\")"))
                     {
-                        
-                        Value = Helper.extractStringContent(line.Substring(Cursor));
-                        Cursor+=Value.Length+2;
-                        return Token.STRING;
+                        Token newToken = new Token();
+                        newToken.Value = Helper.extractStringContent(line.Substring(Cursor));
+                        Cursor+= newToken.Value.Length+2;
+                        newToken.Name = TokenName.STRING;
+                        newToken.Type = TokenType.TERMINAL;
+                        return newToken;
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^([0-9])+"))
                     {
                         Regex r = new Regex(@"^([0-9])+");
-                        Value = r.Match(line.Substring(Cursor)).Value;
-                        Cursor += Value.Length;
-                        return Token.NUMBER;
+                        Token newToken = new Token();
+                        newToken.Value = r.Match(line.Substring(Cursor)).Value;
+                        Cursor += newToken.Value.Length;
+                        newToken.Name = TokenName.NUMBER;
+                        newToken.Type = TokenType.TERMINAL;
+                        return newToken;
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^([a-zA-Z]+([0-9a-zA-Z]*))"))
                     {
                         Regex r = new Regex(@"^([a-zA-Z]+([0-9a-zA-Z]*))");
-                       
-                        Value = r.Match(line.Substring(Cursor)).Value;
-                        Cursor += Value.Length;
-                        return Token.VAR;
+                        Token newToken = new Token();
+                        newToken.Value = r.Match(line.Substring(Cursor)).Value;
+                        Cursor += newToken.Value.Length;
+                        newToken.Name = TokenName.VAR;
+                        newToken.Type = TokenType.VAR;
+                        return newToken;
 
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\n)"))

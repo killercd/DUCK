@@ -26,7 +26,7 @@ namespace Duck.Net
             this.GlobalList = new Dictionary<string, List<string>>();
         }
 
-        public void loadProgram(String fileName)
+        public Tokenizer loadProgram(String fileName)
         {
             String methodName = "loadProgram";
 
@@ -40,18 +40,23 @@ namespace Duck.Net
                 
 
 
+                //Tokenizer lexer = new Tokenizer(file);
+                //while(lexer.nextLine())
+                //{
+                //    Token actualToken = lexer.getNextToken();
+                //    while (actualToken != Token.NEWLINE)
+                //    {
+                //        Console.Write("{"+actualToken.ToString()+"}");
+                //        actualToken = lexer.getNextToken();
+                //    }
+                //    Console.WriteLine("");
+                //}
+                //Console.WriteLine("FINE PROGRAMMA");
+
+
                 Tokenizer lexer = new Tokenizer(file);
-                while(lexer.nextLine())
-                {
-                    Token actualToken = lexer.getNextToken();
-                    while (actualToken != Token.NEWLINE)
-                    {
-                        Console.Write("{"+actualToken.ToString()+"}");
-                        actualToken = lexer.getNextToken();
-                    }
-                    Console.WriteLine("");
-                }
-                Console.WriteLine("FINE PROGRAMMA");
+
+                return lexer;
 
 
                 //while ((line = file.ReadLine()) != null)
@@ -65,7 +70,7 @@ namespace Duck.Net
                 //    counter++;
                 //}
 
-                file.Close();
+                
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
