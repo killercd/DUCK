@@ -8,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace Duck.Net
 {
-
+    public enum LexerAction
+    {
+        CONSUME_TOKEN,
+        LOOK_FORWARD
+    }
     public enum TokenName
     {
         LEFT_CIRCLE_BRACKET,
@@ -46,10 +50,10 @@ namespace Duck.Net
     {
         TERMINAL,
         OPERATOR,
-        CONTROL,
+        STATEMENT,
         NO_TOKEN,
-        SYMBOL,
-        VAR
+        CONDITION,
+        SYMBOL
     }
 
 
@@ -115,7 +119,7 @@ namespace Duck.Net
             return r.IsMatch (str);
         }
        
-        public Token getNextToken()
+        public Token getNextToken(LexerAction action)
         {
             String methodName = "getNextToken";
 
@@ -130,109 +134,129 @@ namespace Duck.Net
 
                     if (catchExpression(line.Substring(Cursor), @"^(if(\s+))"))
                     {
-                        Cursor += 2;
-                        return new Token(TokenName.IF, TokenType.CONTROL);
+                        if(action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
+                        return new Token(TokenName.IF, TokenType.STATEMENT);
                        
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(then(\s*))$"))
                     {
-                        Cursor += 4;
-                        return new Token(TokenName.THEN, TokenType.CONTROL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 4;
+                        return new Token(TokenName.THEN, TokenType.STATEMENT);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(else if(\s+))"))
                     {
-                        Cursor += 6;
-                        return new Token(TokenName.ELSEIF, TokenType.CONTROL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 6;
+                        return new Token(TokenName.ELSEIF, TokenType.STATEMENT);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(else(\s*))$"))
                     {
-                        Cursor += 4;
-                        return new Token(TokenName.ELSE, TokenType.CONTROL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 4;
+                        return new Token(TokenName.ELSE, TokenType.STATEMENT);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(end if(\s*))$"))
                     {
-                        Cursor += 6;
-                        return new Token(TokenName.ENDIF, TokenType.CONTROL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 6;
+                        return new Token(TokenName.ENDIF, TokenType.STATEMENT);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\()"))
                     {
-                        Cursor++;
-                        return new Token(TokenName.LEFT_CIRCLE_BRACKET, TokenType.SYMBOL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
+                        return new Token(TokenName.LEFT_CIRCLE_BRACKET, TokenType.STATEMENT);
                     }
 
 
                     else if (catchExpression(line.Substring(Cursor), @"^(\))"))
                     {
-                        Cursor++;
-                        return new Token(TokenName.RIGHT_CIRCLE_BRACKET, TokenType.SYMBOL);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
+                        return new Token(TokenName.RIGHT_CIRCLE_BRACKET, TokenType.STATEMENT);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\=\=)"))
                     {
-                        Cursor += 2;
-                        return new Token(TokenName.EQUALS, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
+                        return new Token(TokenName.EQUALS, TokenType.CONDITION);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\!\=)"))
                     {
-                        Cursor += 2;
-                        return new Token(TokenName.NOTEQUALS, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
+                        return new Token(TokenName.NOTEQUALS, TokenType.CONDITION);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\>\=)"))
                     {
-                        Cursor += 2;
-                        return new Token(TokenName.MAJOREQUALS, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
+                        return new Token(TokenName.MAJOREQUALS, TokenType.CONDITION);
                     }
 
                     else if (catchExpression(line.Substring(Cursor), @"^(\<\=)"))
                     {
-                        Cursor += 2;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
                         return new Token(TokenName.MINOREQUALS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\+\+)"))
                     {
-                        Cursor += 2;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
                         return new Token(TokenName.PLUSPLUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\-\-)"))
                     {
-                        Cursor += 2;
-                        return new Token(TokenName.MINUSMINUS, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += 2;
+                        return new Token(TokenName.MINUSMINUS, TokenType.CONDITION);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\>)"))
                     {
-                        Cursor++;
-                        return new Token(TokenName.MAJOR, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
+                        return new Token(TokenName.MAJOR, TokenType.CONDITION);
                     }
                    
                     else if (catchExpression(line.Substring(Cursor), @"^(\<)"))
                     {
-                        Cursor++;
-                        return new Token(TokenName.MINOR, TokenType.OPERATOR);
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
+                        return new Token(TokenName.MINOR, TokenType.CONDITION);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\+)"))
                     {
-                        Cursor++;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
                         return new Token(TokenName.PLUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\-)"))
                     {
-                        Cursor++;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
                         return new Token(TokenName.MINUS, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\=)"))
                     {
-                        Cursor++;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
                         return new Token(TokenName.ASSIGN, TokenType.OPERATOR);
                     }
                     else if (catchExpression(line.Substring(Cursor), @"^(\s)"))
                     {
-                        Cursor++;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor++;
                         return new Token(TokenName.SPACE, TokenType.SYMBOL);
                     }
                     else if (catchExpression(line.Substring(Cursor), "^(\".*\")"))
                     {
                         Token newToken = new Token();
                         newToken.Value = Helper.extractStringContent(line.Substring(Cursor));
-                        Cursor+= newToken.Value.Length+2;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += newToken.Value.Length+2;
                         newToken.Name = TokenName.STRING;
                         newToken.Type = TokenType.TERMINAL;
                         return newToken;
@@ -242,7 +266,8 @@ namespace Duck.Net
                         Regex r = new Regex(@"^([0-9])+");
                         Token newToken = new Token();
                         newToken.Value = r.Match(line.Substring(Cursor)).Value;
-                        Cursor += newToken.Value.Length;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += newToken.Value.Length;
                         newToken.Name = TokenName.NUMBER;
                         newToken.Type = TokenType.TERMINAL;
                         return newToken;
@@ -252,23 +277,18 @@ namespace Duck.Net
                         Regex r = new Regex(@"^([a-zA-Z]+([0-9a-zA-Z]*))");
                         Token newToken = new Token();
                         newToken.Value = r.Match(line.Substring(Cursor)).Value;
-                        Cursor += newToken.Value.Length;
+                        if (action == LexerAction.CONSUME_TOKEN)
+                            Cursor += newToken.Value.Length;
                         newToken.Name = TokenName.VAR;
-                        newToken.Type = TokenType.VAR;
+                        newToken.Type = TokenType.STATEMENT;
                         return newToken;
 
                     }
-                    else if (catchExpression(line.Substring(Cursor), @"^(\n)"))
-                    {
-                     
-                        Cursor++;
-                        return Token.NEWLINE;
-
-                    }
+                   
                 }
                 else
                 {
-                    return Token.NEWLINE;
+                    return new Token(TokenName.NEWLINE, TokenType.SYMBOL);
                 }
                 throw new Exception("Invalid token");
             }
