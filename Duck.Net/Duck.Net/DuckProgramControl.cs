@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,7 +46,7 @@ namespace Duck.Net
                     labelName = catchLabel(line);
                     if (!string.IsNullOrEmpty(labelName))
                         this.LabelList[labelName] = counter;
-                    this.LineList.Add(line);
+                    this.LineList.Add(line.Trim());
                     counter++;
                 }
 
@@ -62,6 +63,33 @@ namespace Duck.Net
 
 
         }
+
+        //public string catchProcedure(string istruction)
+        //{
+        //    String methodName = "catchProcedure";
+        //    try
+        //    {
+        //        log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+        //        int pos = 0;
+        //        String iteratorName = String.Empty;
+        //        pos = istruction.IndexOf("[FUNCTION ");
+        //        if (pos >= 0)
+        //        {
+
+        //            iteratorName = istruction.Split(' ')[1].Replace("]", "").Trim(); ;
+        //        }
+
+        //        log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+        //        return iteratorName;
+
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+        //        throw ex;
+        //    }
+        //}
+
         public int compareFunction(List<String> lineIstruction,
                           
                            ref bool IPIsChanged,
@@ -201,6 +229,61 @@ namespace Duck.Net
             }
 
         }
+
+        public void execFunction(List<string> splt)
+        {
+            string methodName = "execFunction";
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+                Process process = new Process();
+
+                String listame = splt[1];
+                List<String> commandList = splt[2].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                if (commandList.Count >=1)
+                {
+                    process.StartInfo.FileName = commandList[0].Trim();
+                    String args = "";
+                    if (commandList.Count >= 2)
+                    {
+                        for (int i = 1; i < commandList.Count; i++)
+                            args += commandList[i] + " ";
+                    }
+                    
+
+                    var proc = new Process
+                    {
+                        
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = commandList[0].Trim(),
+                            Arguments = args,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    List<String> newList = new List<string>();
+                    proc.Start();
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        string line = proc.StandardOutput.ReadLine();
+                        newList.Add(line);
+                    }
+                    GlobalList[listame] = newList;
+
+                }
+             
+
+            }
+            catch(Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
+        }
+
         public void subPrint(List<String> lineIstruction, bool endLine)
         {
 
@@ -216,7 +299,7 @@ namespace Duck.Net
                     string input = lineIstruction[1];
                     if (Helper.isString(input))
                     { //start of string match
-
+                        input = Helper.extractStringContent(input);
                         if (!endLine)
                             Console.Write(input);
                         else

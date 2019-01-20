@@ -27,15 +27,11 @@ namespace Duck.Net
             while (program.EIP < program.LineList.Count && program.EIP >= 0)
             {
 
-                //globalVars["[ITERLIST]"] = lineIstruction[1];
-                //        globalVars["[ITERSTART]"] = labelList[lineIstruction[2]];
-                //        globalVars["[ITEREND]"] = labelList[lineIstruction[3]];
-                //        globalVars["[INLOOPING]"] = 1;
-                //        globalVars["[ITERCOUNTER]"] = 0;
-
 
                 string lbl;
                 string iteratorListName;
+                //string procedureName;
+
                 List<string> splt = new List<string>();
 
                 lbl = program.catchLabel(program.LineList[program.EIP]);
@@ -45,11 +41,10 @@ namespace Duck.Net
                     continue;
                 }
 
-                iteratorListName =  program.catchIterator(program.LineList[program.EIP]);
+                iteratorListName = program.catchIterator(program.LineList[program.EIP]);
                 if (!String.IsNullOrEmpty(iteratorListName))
                 {
                     program.EIP++;
-
                     program.enableIteration(iteratorListName);
                     continue;
                 }
@@ -58,6 +53,12 @@ namespace Duck.Net
                     program.checkIterationEnd();
                     continue;
                 }
+
+                //if (program.catchProcedure(program.LineList[program.EIP]))
+                //{
+                //    program.gotoEndProcedure();
+                //    continue;
+                //}
                 splt = new List<string>(program.LineList[program.EIP].Split('_'));
 
                 if (splt.Count() <= 0)
@@ -114,7 +115,7 @@ namespace Duck.Net
                 else if (splt[0] == "<")
                 {
                     bool ipChanged = false;
-                  
+
                     program.EIP = program.compareFunction(splt, ref ipChanged, "<");
                     if (!ipChanged)
                         program.EIP++;
@@ -209,6 +210,12 @@ namespace Duck.Net
                     program.iteratorFunction(splt);
 
                 }
+                else if (splt[0] == "exec")
+                {
+                    program.execFunction(splt);
+                    program.EIP++;
+
+                }
                 else
                 {
 
@@ -225,9 +232,9 @@ namespace Duck.Net
                 Console.WriteLine("duck.exe program.dck");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                log.Error("Si è verificato un errore usage()",ex);
+                log.Error("Si è verificato un errore usage()", ex);
             }
         }
     }
