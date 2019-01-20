@@ -216,6 +216,15 @@ namespace Duck.Net
                     program.EIP++;
 
                 }
+                else if (splt[0] == "string")
+                {
+                    if (splt[1] == "find") {
+                        program.findString(splt);
+                    }
+                    
+                    program.EIP++;
+
+                }
                 else
                 {
 

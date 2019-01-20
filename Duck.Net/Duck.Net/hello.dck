@@ -1,4 +1,12 @@
 exec_DIRRESULT_cmd.exe /c dir
-list_size_szlist_DIRRESULT
 
-prntnl_szlist
+[ITERATOR DIRRESULT]
+string_find_STRPOS_[CURRENT]_".dck"
+>=_STRPOS_-1_print
+goto noprint
+	
+:print
+	prntnl_[CURRENT]
+:noprint
+	
+[END ITERATOR]

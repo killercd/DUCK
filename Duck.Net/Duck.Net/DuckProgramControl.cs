@@ -43,7 +43,7 @@ namespace Duck.Net
                 {
 
                     String labelName = string.Empty;
-                    labelName = catchLabel(line);
+                    labelName = catchLabel(line.Trim());
                     if (!string.IsNullOrEmpty(labelName))
                         this.LabelList[labelName] = counter;
                     this.LineList.Add(line.Trim());
@@ -228,6 +228,48 @@ namespace Duck.Net
                 throw ex;
             }
 
+        }
+
+        public void findString(List<string> splt)
+        {
+            String methodName = "findString";
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+
+                String destinationVar = splt[2];
+                String strInput = splt[3];
+                String inStr = String.Empty;
+
+                if (Helper.isNumber(strInput))
+                    inStr = strInput;
+                else if (Helper.isString(strInput))
+                    inStr = Helper.extractStringContent(strInput);
+                else
+                    inStr = GlobalVars[strInput];
+
+                String searchString = splt[4];
+
+                if (Helper.isString(searchString))
+                    searchString = Helper.extractStringContent(searchString);
+                else if (Helper.isNumber(searchString))
+                    searchString = searchString.ToString();
+                else
+                    searchString = GlobalVars[searchString];
+
+
+
+                int pos = inStr.IndexOf(searchString);
+                GlobalVars[destinationVar] = pos.ToString();
+
+                log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+            }
+            catch(Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+
+            }
         }
 
         public void execFunction(List<string> splt)
