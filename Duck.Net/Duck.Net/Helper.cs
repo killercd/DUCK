@@ -15,7 +15,19 @@ namespace Duck.Net
         }
         public static String extractStringContent(String str)
         {
-            return str.Substring(1, str.Length - 2);
+            String value = "";
+            if (string.IsNullOrEmpty(str) || !str.StartsWith("\""))
+                return string.Empty;
+            
+            int ptr = 1;
+            char c = str[ptr];
+            while (c != '"')
+            {
+                value = value + c;
+                ptr++;
+                c = str[ptr];
+            }
+            return value;
         }
         public static bool isNumber(String str)
         {
@@ -23,6 +35,12 @@ namespace Duck.Net
                 return false;
             int intrev;
             return Int32.TryParse(str, out intrev);
+        }
+
+        public static string extractDigitContent(string str)
+        {
+            String value = Int32.Parse(str).ToString();
+            return value;
         }
     }
 }
