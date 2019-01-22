@@ -221,7 +221,10 @@ namespace Duck.Net
                     if (splt[1] == "find") {
                         program.findString(splt);
                     }
-                    
+                    else if (splt[1] == "regexsplit")
+                    {
+                        program.regexSplit(splt);
+                    }
                     program.EIP++;
 
                 }

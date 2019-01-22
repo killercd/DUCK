@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Duck.Net
@@ -228,6 +229,47 @@ namespace Duck.Net
                 throw ex;
             }
 
+        }
+
+        public void regexSplit(List<string> splt)
+        {
+            String methodName = "regexSplit";
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+                String destinationList = splt[2];
+                String destinationString = splt[3];
+                String regexPattern = splt[4];
+
+                
+                
+                if (Helper.isString(destinationString))
+                    destinationString = Helper.extractStringContent(destinationString);
+                else if(!Helper.isNumber(destinationString))
+                    destinationString = GlobalVars[destinationString];
+
+                if (Helper.isString(regexPattern))
+                    regexPattern = Helper.extractStringContent(regexPattern);
+                else if (!Helper.isNumber(regexPattern))
+                    regexPattern = GlobalVars[regexPattern];
+
+
+                List<String> splitList = Regex.Split(destinationString, regexPattern, RegexOptions.IgnoreCase).ToList();
+                List<String> assignList = new List<string>();
+
+                foreach(String str in splitList)
+                {
+                    assignList.Add(Helper.trasformToString(str));
+                }
+
+                GlobalList[destinationList] = assignList;
+                log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+            }
+            catch(Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
         }
 
         public void findString(List<string> splt)

@@ -1,12 +1,11 @@
 exec_DIRRESULT_cmd.exe /c dir
 
 [ITERATOR DIRRESULT]
-string_find_STRPOS_[CURRENT]_".dck"
->=_STRPOS_-1_print
-goto noprint
+	string_regexsplit_RESULTLIST_[CURRENT]_"\s+"
+	list_size_SZ_RESULTLIST
+	<_SZ_5_noread
+	list_read_FILE_RESULTLIST_4
+	prntnl_FILE
 	
-:print
-	prntnl_[CURRENT]
-:noprint
-	
+	:noread
 [END ITERATOR]
