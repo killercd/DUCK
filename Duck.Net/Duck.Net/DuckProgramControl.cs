@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Duck.Net
 {
+    
     class DuckProgramControl
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -17,8 +18,8 @@ namespace Duck.Net
         public Dictionary<String, int> LabelList { get; set; }
         public int EIP { get; set; }
         public Dictionary<String, String> GlobalVars { get; set; }
-        Dictionary<String, List<String>> GlobalList { get; set; }
-
+        public Dictionary<String, List<String>> GlobalList { get; set; }
+        public Token LastToken { get; set; }
         public DuckProgramControl()
         {
             this.LineList = new List<String>();
@@ -65,6 +66,60 @@ namespace Duck.Net
 
         }
 
+        public void catchAssignment(Tokenizer scanner, Token setToken)
+        {
+            String methodName = "catchAssignment";
+            Stack<Token> stack = new Stack<Token>();
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+                Token actualToken = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                LastToken = setToken;
+                while (true)
+                {
+                    if (actualToken.Name == TokenName.SPACE)
+                    {
+                        
+                        actualToken = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                        continue;
+                    }
+                    if (actualToken.Name == TokenName.VAR && LastToken.Name == TokenName.SET)
+                    {
+                        LastToken = actualToken;
+                        stack.Push(actualToken);
+
+                        actualToken = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                        continue;
+                    }
+                    if((actualToken.Name == TokenName.VAR || actualToken.Name == TokenName.STRING || actualToken.Name == TokenName.NUMBER) && LastToken.Name == TokenName.ASSIGN )
+                    {
+                        String sourceVar = actualToken.Value;
+                        Token assignToken = stack.Pop();
+                        Token destinationTokenVar = stack.Pop();
+                        String destinationVar = destinationTokenVar.Value;
+
+                        subAssegnamento(destinationVar, sourceVar);
+                        return;
+
+                    }
+                    if (actualToken.Name == TokenName.ASSIGN && LastToken.Name == TokenName.VAR)
+                    {
+                        LastToken = actualToken;
+                        stack.Push(actualToken);
+
+                        actualToken = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                        continue;
+                    }
+                    throw new Exception("Invalid assignment command");
+                }                
+                log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+            }
+            catch (Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
+        }
         //public string catchProcedure(string istruction)
         //{
         //    String methodName = "catchProcedure";
@@ -231,6 +286,38 @@ namespace Duck.Net
 
         }
 
+        public void stringAppend(List<string> splt)
+        {
+            String methodName = "stringAppend";
+            try {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+
+                String destinationVar = splt[2];
+                String destinationStr = splt[3];
+                String sourceStr = splt[4];
+
+                if (Helper.isString(destinationStr))
+                    destinationStr = Helper.extractStringContent(destinationStr);
+                else if (!Helper.isNumber(destinationStr))
+                    destinationStr = GlobalVars[destinationStr];
+
+                if (Helper.isString(sourceStr))
+                    sourceStr = Helper.extractStringContent(sourceStr);
+                else if (!Helper.isNumber(sourceStr))
+                    sourceStr = GlobalVars[sourceStr];
+
+                GlobalVars[destinationVar] = destinationStr + sourceStr;
+
+                log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
+        }
+
         public void regexSplit(List<string> splt)
         {
             String methodName = "regexSplit";
@@ -356,6 +443,7 @@ namespace Duck.Net
                         newList.Add(line);
                     }
                     GlobalList[listame] = newList;
+                    GlobalVars["[EXITCODE]"] = proc.ExitCode.ToString();
 
                 }
              
@@ -392,16 +480,34 @@ namespace Duck.Net
                     }
                     else
                     {
-                        input = this.GlobalVars[input];
-                        string outPut;
-                        if (Helper.isString(input))
-                            outPut = Helper.extractStringContent(input);
+                        if (this.GlobalVars.ContainsKey(input)) { 
+                            input = this.GlobalVars[input];
+                            string outPut;
+                            if (Helper.isString(input))
+                                outPut = Helper.extractStringContent(input);
+                            else
+                                outPut = input;
+                            if (!endLine)
+                                Console.Write(outPut);
+                            else
+                                Console.WriteLine(outPut);
+                        }
                         else
-                            outPut = input;
-                        if (!endLine)
-                            Console.Write(outPut);
-                        else
-                            Console.WriteLine(outPut);
+                        {
+                            List<string> lst = this.GlobalList[input];
+                            string outPut;
+                            foreach (String actString in lst)
+                            {
+                                if (Helper.isString(actString))
+                                    outPut = Helper.extractStringContent(actString);
+                                else
+                                    outPut = actString;
+                                if (!endLine)
+                                    Console.Write(outPut);
+                                else
+                                    Console.WriteLine(outPut);
+                            }
+                        }
                     }
 
                 }
@@ -603,7 +709,7 @@ namespace Duck.Net
                     inx = Int32.Parse(listIndex);
 
 
-                subAssegnamento(varAssegnamento, this.GlobalList[listName][inx]);
+                subAssegnamento(varAssegnamento, Helper.trasformToString(this.GlobalList[listName][inx]));
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));

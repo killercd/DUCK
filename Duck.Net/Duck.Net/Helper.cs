@@ -42,9 +42,10 @@ namespace Duck.Net
             String value = Int32.Parse(str).ToString();
             return value;
         }
-        public static string trasformToString(String str)
+        public static string trasformToString(string str)
         {
-            return string.IsNullOrEmpty(str) ? "\"\"" : "\"" + str + "\"";
+            str = string.IsNullOrEmpty(str) ? "" : str;
+            return "\"" + str + "\"";
         }
     }
 }

@@ -22,17 +22,29 @@ namespace Duck.Net
             string file = args[0];
 
             program.loadProgram(file);
+            Tokenizer scanner = new Tokenizer(program.LineList);
 
+            program.GlobalList["[ARGV]"] = args.ToList();
 
             while (program.EIP < program.LineList.Count && program.EIP >= 0)
             {
 
 
+                
                 string lbl;
                 string iteratorListName;
                 //string procedureName;
 
                 List<string> splt = new List<string>();
+
+                scanner.nextLine();
+                Token token = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                if(token.Name == TokenName.SET)
+                {
+                    program.catchAssignment(scanner, token);
+                    program.EIP++;
+                    continue;
+                }
 
                 lbl = program.catchLabel(program.LineList[program.EIP]);
                 if (!String.IsNullOrEmpty(lbl))
@@ -224,6 +236,10 @@ namespace Duck.Net
                     else if (splt[1] == "regexsplit")
                     {
                         program.regexSplit(splt);
+                    }
+                    else if (splt[1] == "append")
+                    {
+                        program.stringAppend(splt);
                     }
                     program.EIP++;
 

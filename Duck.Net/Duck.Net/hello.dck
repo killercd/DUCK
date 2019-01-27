@@ -1,11 +1,1 @@
-exec_DIRRESULT_cmd.exe /c dir
-
-[ITERATOR DIRRESULT]
-	string_regexsplit_RESULTLIST_[CURRENT]_"\s+"
-	list_size_SZ_RESULTLIST
-	<_SZ_5_noread
-	list_read_FILE_RESULTLIST_4
-	prntnl_FILE
-	
-	:noread
-[END ITERATOR]
+SET a = "Ciao"
