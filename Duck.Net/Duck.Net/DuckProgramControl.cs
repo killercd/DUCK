@@ -785,7 +785,7 @@ namespace Duck.Net
                 string varName = lineIstruction[2];
                 string tmpInput = Console.ReadLine();
 
-                subAssegnamento(varName, tmpInput);
+                subAssegnamento(varName, Helper.trasformToString(tmpInput));
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }

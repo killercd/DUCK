@@ -1,1 +1,13 @@
-SET a = "Ciao"
+input_textfile_LIST_../../prova.txt
+list_size_CNT_LIST
+
+=_START_CNT
+-_START_START_1
+
+:loop
+	list_read_ELEM_LIST_START
+	prntnl_ELEM
+	-_START_START_1
+	<_-1_START_loop
+
+input_key_AA

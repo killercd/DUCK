@@ -16,18 +16,29 @@ namespace Duck.Net
         public static String extractStringContent(String str)
         {
             String value = "";
+            int start = 0;
             if (string.IsNullOrEmpty(str) || !str.StartsWith("\""))
                 return string.Empty;
-            
-            int ptr = 1;
-            char c = str[ptr];
-            while (c != '"')
+            str = str.Trim();
+            try
             {
-                value = value + c;
-                ptr++;
-                c = str[ptr];
+                int i = 0;
+                while (str[i] == '"')
+                    i++;
+
+                start = i;
+
+                i = str.Length - 1;
+                while (str[i] == '"')
+                    i--;
+                value = str.Substring(start, i-1);
+                return value;
             }
-            return value;
+            catch(Exception e)
+            {
+                return string.Empty;
+            }
+            
         }
         public static bool isNumber(String str)
         {
