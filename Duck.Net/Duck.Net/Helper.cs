@@ -31,7 +31,7 @@ namespace Duck.Net
                 i = str.Length - 1;
                 while (str[i] == '"')
                     i--;
-                value = str.Substring(start, i-1);
+                value = str.Substring(start, i);
                 return value;
             }
             catch(Exception e)

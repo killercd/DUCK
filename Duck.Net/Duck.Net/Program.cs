@@ -228,7 +228,7 @@ namespace Duck.Net
                     program.EIP++;
 
                 }
-                else if (splt[0] == "string")
+                else if (splt[0] == "str")
                 {
                     if (splt[1] == "find") {
                         program.findString(splt);
@@ -240,6 +240,10 @@ namespace Duck.Net
                     else if (splt[1] == "append")
                     {
                         program.stringAppend(splt);
+                    }
+                    else if (splt[1] == "tolist")
+                    {
+                        program.stringToList(splt);
                     }
                     program.EIP++;
 

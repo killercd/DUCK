@@ -245,6 +245,8 @@ namespace Duck.Net
                 throw ex;
             }
         }
+
+
         public void subAssegnamentoList(String destinazione, String sorgente, int index)
         {
             String methodName = "subAssegnamentoList";
@@ -286,6 +288,37 @@ namespace Duck.Net
 
         }
 
+        public void stringToList(List<string> splt)
+        {
+            String methodName = "stringToList";
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+
+                String destinationList = splt[2];
+                String sourceStr = splt[3];
+
+                if (Helper.isString(sourceStr))
+                    sourceStr = Helper.extractStringContent(sourceStr);
+                else if (!Helper.isNumber(sourceStr))
+                    sourceStr = GlobalVars[sourceStr];
+
+                List<String> nwList = new List<String>();
+                for(int i = 0; i<sourceStr.Length; i++)
+                {
+                    nwList.Add(sourceStr[i].ToString());
+                }
+
+                GlobalList[destinationList] = nwList;
+                log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
+            }
+            catch (Exception ex)
+            {
+
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
+        }
         public void stringAppend(List<string> splt)
         {
             String methodName = "stringAppend";
