@@ -161,7 +161,7 @@ namespace Duck.Net
                 string term1 = lineIstruction[1];
                 string term2 = lineIstruction[2];
                 string jumpLabel = lineIstruction[3];
-
+                string elseJump = lineIstruction.Count > 4 ? lineIstruction[4] : string.Empty;
 
 
 
@@ -178,11 +178,17 @@ namespace Duck.Net
                     term2 = this.GlobalVars[term2];
 
                 int jumpTo = 0;
+                int jumpToElse = 0;
 
                 if (!Helper.isNumber(jumpLabel))
                     jumpTo = this.LabelList[jumpLabel];
                 else
                     jumpTo = Int32.Parse(jumpLabel);
+
+                if (!Helper.isNumber(elseJump))
+                    jumpToElse = this.LabelList[elseJump];
+                else
+                    jumpToElse = Int32.Parse(elseJump);
 
 
 
@@ -198,11 +204,21 @@ namespace Duck.Net
                     EIP = jumpTo;
                     IPIsChanged = true;
                 }
+                else {
+
+                    if (jumpLabel != string.Empty)
+                    {
+                        EIP = jumpToElse;
+                        IPIsChanged = true;
+                    }
+                    else
+                    {
+                        IPIsChanged = false;
+                    }
+                }
 
 
-
-
-                IPIsChanged = false;
+               
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
 
@@ -818,7 +834,10 @@ namespace Duck.Net
                 string varName = lineIstruction[2];
                 string tmpInput = Console.ReadLine();
 
-                subAssegnamento(varName, Helper.trasformToString(tmpInput));
+                if(!Helper.isNumber(tmpInput))
+                    subAssegnamento(varName, Helper.trasformToString(tmpInput));
+                else
+                    subAssegnamento(varName, tmpInput);
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }

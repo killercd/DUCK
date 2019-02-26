@@ -37,14 +37,14 @@ namespace Duck.Net
 
                 List<string> splt = new List<string>();
 
-                scanner.nextLine();
-                Token token = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
-                if(token.Name == TokenName.SET)
-                {
-                    program.catchAssignment(scanner, token);
-                    program.EIP++;
-                    continue;
-                }
+                //scanner.nextLine();
+                //Token token = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
+                //if(token.Name == TokenName.SET)
+                //{
+                //    program.catchAssignment(scanner, token);
+                //    program.EIP++;
+                //    continue;
+                //}
 
                 lbl = program.catchLabel(program.LineList[program.EIP]);
                 if (!String.IsNullOrEmpty(lbl))
