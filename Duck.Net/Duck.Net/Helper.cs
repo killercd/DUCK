@@ -15,30 +15,13 @@ namespace Duck.Net
         }
         public static String extractStringContent(String str)
         {
-            String value = "";
-            int start = 0;
-            if (string.IsNullOrEmpty(str) || !str.StartsWith("\""))
-                return string.Empty;
-            str = str.Trim();
-            try
+            if (str != null)
             {
-                int i = 0;
-                while (str[i] == '"')
-                    i++;
-
-                start = i;
-
-                i = str.Length - 1;
-                while (str[i] == '"')
-                    i--;
-                value = str.Substring(start, i);
-                return value;
+                str = str.TrimStart('"');
+                str = str.TrimEnd('"');
+                return str;
             }
-            catch(Exception e)
-            {
-                return string.Empty;
-            }
-            
+            return str;
         }
         public static bool isNumber(String str)
         {
@@ -56,7 +39,10 @@ namespace Duck.Net
         public static string trasformToString(string str)
         {
             str = string.IsNullOrEmpty(str) ? "" : str;
-            return "\"" + str + "\"";
+            if (!Helper.isString(str))
+                return $"\"{str}\"";
+            else
+                return str;
         }
     }
 }
