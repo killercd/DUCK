@@ -71,6 +71,15 @@ namespace Duck.Net
                 //    program.gotoEndProcedure();
                 //    continue;
                 //}
+                //Express mode
+                if(program.LineList[program.EIP].StartsWith("@"))
+                {
+                    program.printObject(program.LineList[program.EIP]);
+                    program.EIP++;
+                    continue;
+                }
+                //end of express mode
+
                 splt = new List<string>(program.LineList[program.EIP].Split('_'));
 
                 if (splt.Count() <= 0)
@@ -228,6 +237,14 @@ namespace Duck.Net
                     program.EIP++;
 
                 }
+                else if(splt[0] == "$$")
+                {
+                    program.shell(splt);
+                    program.EIP++;
+
+                }
+              
+
                 else if (splt[0] == "str")
                 {
                     if (splt[1] == "find") {

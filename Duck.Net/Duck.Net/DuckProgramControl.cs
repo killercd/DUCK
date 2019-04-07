@@ -185,11 +185,13 @@ namespace Duck.Net
                 else
                     jumpTo = Int32.Parse(jumpLabel);
 
-                if (!Helper.isNumber(elseJump))
-                    jumpToElse = this.LabelList[elseJump];
-                else
-                    jumpToElse = Int32.Parse(elseJump);
-
+                if (!string.IsNullOrEmpty(elseJump))
+                {
+                    if (!Helper.isNumber(elseJump))
+                        jumpToElse = this.LabelList[elseJump];
+                    else
+                        jumpToElse = Int32.Parse(elseJump);
+                }
 
 
                 if (
@@ -230,6 +232,32 @@ namespace Duck.Net
                 throw ex;
             }
             return EIP;
+        }
+
+        public void printObject(string splt)
+        {
+            try
+            {
+                string var = splt.Substring(splt.IndexOf("@")+1);
+                Console.WriteLine(var);
+                if (!string.IsNullOrEmpty(var))
+                {
+                    if (GlobalVars.ContainsKey(var))
+                        Console.WriteLine(GlobalVars[var]);
+                    else if (GlobalList.ContainsKey(var))
+                    {
+                        foreach (string cc in GlobalList[var]) {
+                            Console.WriteLine(cc);
+                        }
+                    }
+                }
+                return;
+            }
+            catch(Exception ex)
+            {
+                return;
+            }
+            
         }
 
         public void subAssegnamento(String destinazione, String sorgente)
@@ -450,6 +478,55 @@ namespace Duck.Net
             }
         }
 
+
+        public void shell(List<string> splt)
+        {
+            string methodName = nameof(shell);
+            try
+            {
+                log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
+
+
+                string listname = splt[1];
+                string command = splt[2];
+
+            
+
+                if (Helper.isString(command))
+                    command = Helper.extractStringContent(command);
+                else
+                    command = this.GlobalVars[command];
+               
+                var proc = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = "/c \"" + command + "\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false
+                    }
+                };
+                proc.Start();
+
+                List<String> newList = new List<string>();
+           
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    string line = proc.StandardOutput.ReadLine();
+                    newList.Add(line);
+                }
+                GlobalList[listname] = newList;
+                GlobalVars["[EXITCODE]"] = proc.ExitCode.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(String.Format("{0} - {1} ERROR", this.GetType().Name, methodName), ex);
+                throw ex;
+            }
+        }
         public void execFunction(List<string> splt)
         {
             string methodName = "execFunction";
