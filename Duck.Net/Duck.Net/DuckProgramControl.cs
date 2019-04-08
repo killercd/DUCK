@@ -14,6 +14,8 @@ namespace Duck.Net
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+
+
         public List<String> LineList { get; set; }
         public Dictionary<String, int> LabelList { get; set; }
         public int EIP { get; set; }
@@ -29,6 +31,14 @@ namespace Duck.Net
             this.GlobalList = new Dictionary<string, List<string>>();
         }
 
+        public String GetVar(String varName)
+        {
+            if (string.IsNullOrEmpty(varName) || GlobalVars==null || !GlobalVars.ContainsKey(varName) || string.IsNullOrEmpty(GlobalVars[varName]))
+            {
+                return string.Empty;
+            }
+            return GlobalVars[varName];
+        }
         public void loadProgram(String fileName)
         {
             String methodName = "loadProgram";
@@ -169,13 +179,13 @@ namespace Duck.Net
                     term1 = Helper.extractStringContent(term1);
                 else
                     if (!Helper.isNumber(term1))
-                    term1 = this.GlobalVars[term1];
+                    term1 = GetVar(term1);
 
                 if (Helper.isString(term2))
                     term2 = Helper.extractStringContent(term2);
                 else
                     if (!Helper.isNumber(term2))
-                    term2 = this.GlobalVars[term2];
+                    term2 = GetVar(term2);
 
                 int jumpTo = 0;
                 int jumpToElse = 0;
@@ -239,7 +249,7 @@ namespace Duck.Net
             try
             {
                 string var = splt.Substring(splt.IndexOf("@")+1);
-                Console.WriteLine(var);
+                
                 if (!string.IsNullOrEmpty(var))
                 {
                     if (GlobalVars.ContainsKey(var))
@@ -279,7 +289,7 @@ namespace Duck.Net
                     this.GlobalVars[destinazione] = sorgente;
                 }
                 else
-                    this.GlobalVars[destinazione] = this.GlobalVars[sorgente];
+                    this.GlobalVars[destinazione] = GetVar(sorgente);
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
@@ -317,9 +327,9 @@ namespace Duck.Net
                 }
                 else
                    if (index == -1)
-                    this.GlobalList[destinazione].Add(this.GlobalVars[sorgente]);
+                    this.GlobalList[destinazione].Add(GetVar(sorgente));
                 else
-                    this.GlobalList[destinazione][index] = this.GlobalVars[sorgente];
+                    this.GlobalList[destinazione][index] = GetVar(sorgente);
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
@@ -495,7 +505,7 @@ namespace Duck.Net
                 if (Helper.isString(command))
                     command = Helper.extractStringContent(command);
                 else
-                    command = this.GlobalVars[command];
+                    command = GetVar(command);
                
                 var proc = new Process
                 {
@@ -607,7 +617,7 @@ namespace Duck.Net
                     else
                     {
                         if (this.GlobalVars.ContainsKey(input)) { 
-                            input = this.GlobalVars[input];
+                            input = GetVar(input);
                             string outPut;
                             if (Helper.isString(input))
                                 outPut = Helper.extractStringContent(input);
@@ -721,12 +731,12 @@ namespace Duck.Net
                 if (Helper.isNumber(term1))
                     mTerm1 = Int64.Parse(term1);
                 else
-                    mTerm1 = Int64.Parse(this.GlobalVars[term1]);
+                    mTerm1 = Int64.Parse(GetVar(term1));
 
                 if (Helper.isNumber(term2))
                     mTerm2 = Int64.Parse(term2);
                 else
-                    mTerm2 = Int64.Parse(this.GlobalVars[term2]);
+                    mTerm2 = Int64.Parse(GetVar(term2));
 
                 if (oper == '+')
                     result = mTerm1 + mTerm2;
@@ -776,7 +786,7 @@ namespace Duck.Net
                     else if (Helper.isString(spltTerm[i]))
                         newList.Add(Helper.extractStringContent(spltTerm[i]));
                     else
-                        newList.Add(this.GlobalVars[spltTerm[i]]);
+                        newList.Add(GetVar(spltTerm[i]));
 
 
                 }
@@ -830,7 +840,7 @@ namespace Duck.Net
 
                 int inx = 0;
                 if (!Helper.isNumber(listIndex))
-                    inx = Int32.Parse(this.GlobalVars[listIndex]);
+                    inx = Int32.Parse(GetVar(listIndex));
                 else
                     inx = Int32.Parse(listIndex);
 
@@ -1125,9 +1135,9 @@ namespace Duck.Net
 
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
-                string iteratorListName = this.GlobalVars["[ITERLIST]"];
+                string iteratorListName = GetVar("[ITERLIST]");
                 int listSize = this.GlobalList[iteratorListName].Count;
-                int actualIterCounter = Int32.Parse(this.GlobalVars["[ITERCOUNTER]"]);
+                int actualIterCounter = Int32.Parse(GetVar("[ITERCOUNTER]"));
 
                 actualIterCounter++;
                 if (actualIterCounter < listSize)
@@ -1136,7 +1146,7 @@ namespace Duck.Net
                     this.GlobalVars["[ITERCOUNTER]"] = actualIterCounter.ToString();
                     this.GlobalVars["[CURRENT]"] = this.GlobalList[iteratorListName][actualIterCounter];
 
-                    EIP = Int32.Parse(this.GlobalVars["[ITERSTART]"]);
+                    EIP = Int32.Parse(GetVar("[ITERSTART]"));
 
                 }
                 else

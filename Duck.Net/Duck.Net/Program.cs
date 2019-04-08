@@ -39,7 +39,7 @@ namespace Duck.Net
 
                 //scanner.nextLine();
                 //Token token = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
-                //if(token.Name == TokenName.SET)
+                //if (token.Name == TokenName.SET)
                 //{
                 //    program.catchAssignment(scanner, token);
                 //    program.EIP++;

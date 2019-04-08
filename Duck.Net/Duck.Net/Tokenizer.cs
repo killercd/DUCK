@@ -264,7 +264,7 @@ namespace Duck.Net
                             Cursor++;
                         return new Token(TokenName.SPACE, TokenType.SYMBOL);
                     }
-                    else if (catchExpression(line.Substring(Cursor), "^(\".*\")"))
+                    else if (catchExpression(line.Substring(Cursor), "^(\".*\")|^(\'.*\')"))
                     {
                         Token newToken = new Token();
                         newToken.Value = line.Substring(Cursor);

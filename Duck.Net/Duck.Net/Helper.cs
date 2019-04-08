@@ -11,18 +11,27 @@ namespace Duck.Net
     {
         public static bool isString(String str)
         {
-            return (!string.IsNullOrEmpty(str) && str.StartsWith("\"") && str.EndsWith("\""));
+            return (!string.IsNullOrEmpty(str) && str.StartsWith("\"") && str.EndsWith("\"") || !string.IsNullOrEmpty(str) && str.StartsWith("'") && str.EndsWith("'"));
         }
         public static String extractStringContent(String str)
         {
             if (str != null)
             {
-                str = str.TrimStart('"');
-                str = str.TrimEnd('"');
+                if (str.StartsWith("\""))
+                {
+                    str = str.TrimStart('"');
+                    str = str.TrimEnd('"');
+                }
+                else if (str.StartsWith("\'")) {
+                    str = str.TrimStart('\'');
+                    str = str.TrimEnd('\'');
+                }
+        
                 return str;
             }
             return str;
         }
+
         public static bool isNumber(String str)
         {
             if (string.IsNullOrEmpty(str))
