@@ -39,6 +39,13 @@ namespace Duck.Net
             }
             return GlobalVars[varName];
         }
+        public List<String> GetList(String listName) {
+            if(string.IsNullOrEmpty(listName) || GlobalList==null || !GlobalList.ContainsKey(listName) || GetList(listName)==null)
+            {
+                return new List<String>();
+            }
+            return GlobalList[listName];
+        }
         public void loadProgram(String fileName)
         {
             String methodName = "loadProgram";
@@ -256,7 +263,7 @@ namespace Duck.Net
                         Console.WriteLine(GlobalVars[var]);
                     else if (GlobalList.ContainsKey(var))
                     {
-                        foreach (string cc in GlobalList[var]) {
+                        foreach (string cc in GetList(var)) {
                             Console.WriteLine(cc);
                         }
                     }
@@ -314,22 +321,22 @@ namespace Duck.Net
                 if (Helper.isString(sorgente))
                 {
                     if (index == -1)
-                        this.GlobalList[destinazione].Add(Helper.extractStringContent(sorgente));
+                        this.GetList(destinazione).Add(Helper.extractStringContent(sorgente));
                     else
-                        this.GlobalList[destinazione][index] = Helper.extractStringContent(sorgente);
+                        this.GetList(destinazione)[index] = Helper.extractStringContent(sorgente);
                 }
                 else if (Helper.isNumber(sorgente))
                 {
                     if (index == -1)
-                        this.GlobalList[destinazione].Add(sorgente);
+                        this.GetList(destinazione).Add(sorgente);
                     else
-                        this.GlobalList[destinazione][index] = sorgente;
+                        this.GetList(destinazione)[index] = sorgente;
                 }
                 else
                    if (index == -1)
-                    this.GlobalList[destinazione].Add(GetVar(sorgente));
+                    this.GetList(destinazione).Add(GetVar(sorgente));
                 else
-                    this.GlobalList[destinazione][index] = GetVar(sorgente);
+                    this.GetList(destinazione)[index] = GetVar(sorgente);
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
@@ -630,7 +637,7 @@ namespace Duck.Net
                         }
                         else
                         {
-                            List<string> lst = this.GlobalList[input];
+                            List<string> lst = this.GetList(input);
                             string outPut;
                             foreach (String actString in lst)
                             {
@@ -811,7 +818,7 @@ namespace Duck.Net
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
 
-                subAssegnamento(lineIstruction[2], this.GlobalList[lineIstruction[3]].Count.ToString());
+                subAssegnamento(lineIstruction[2], this.GetList(lineIstruction[3]).Count.ToString());
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
@@ -845,7 +852,7 @@ namespace Duck.Net
                     inx = Int32.Parse(listIndex);
 
 
-                subAssegnamento(varAssegnamento, Helper.trasformToString(this.GlobalList[listName][inx]));
+                subAssegnamento(varAssegnamento, Helper.trasformToString(this.GetList(listName)[inx]));
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
@@ -1025,7 +1032,7 @@ namespace Duck.Net
 
                 file.Close();
 
-                this.GlobalList[listName] = lineList;
+                GlobalList[listName] = lineList;
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
@@ -1098,7 +1105,7 @@ namespace Duck.Net
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
 
-                int listSize = this.GlobalList[iteratorListName].Count;
+                int listSize = this.GetList(iteratorListName).Count;
 
 
 
@@ -1114,7 +1121,7 @@ namespace Duck.Net
                 }
                 else
                 {
-                    this.GlobalVars["[CURRENT]"] = this.GlobalList[iteratorListName][0];
+                    this.GlobalVars["[CURRENT]"] = this.GetList(iteratorListName)[0];
                 }
 
 
@@ -1136,7 +1143,7 @@ namespace Duck.Net
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
                 string iteratorListName = GetVar("[ITERLIST]");
-                int listSize = this.GlobalList[iteratorListName].Count;
+                int listSize = this.GetList(iteratorListName).Count;
                 int actualIterCounter = Int32.Parse(GetVar("[ITERCOUNTER]"));
 
                 actualIterCounter++;
@@ -1144,7 +1151,7 @@ namespace Duck.Net
                 {
 
                     this.GlobalVars["[ITERCOUNTER]"] = actualIterCounter.ToString();
-                    this.GlobalVars["[CURRENT]"] = this.GlobalList[iteratorListName][actualIterCounter];
+                    this.GlobalVars["[CURRENT]"] = this.GetList(iteratorListName)[actualIterCounter];
 
                     EIP = Int32.Parse(GetVar("[ITERSTART]"));
 
