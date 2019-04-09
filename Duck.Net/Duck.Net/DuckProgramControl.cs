@@ -40,7 +40,7 @@ namespace Duck.Net
             return GlobalVars[varName];
         }
         public List<String> GetList(String listName) {
-            if(string.IsNullOrEmpty(listName) || GlobalList==null || !GlobalList.ContainsKey(listName) || GetList(listName)==null)
+            if(string.IsNullOrEmpty(listName) || GlobalList==null || !GlobalList.ContainsKey(listName) || GlobalList[listName]==null)
             {
                 return new List<String>();
             }
