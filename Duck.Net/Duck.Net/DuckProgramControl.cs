@@ -225,7 +225,7 @@ namespace Duck.Net
                 }
                 else {
 
-                    if (jumpLabel != string.Empty)
+                    if (elseJump != string.Empty)
                     {
                         EIP = jumpToElse;
                         IPIsChanged = true;
