@@ -11,22 +11,29 @@ namespace Duck.Net
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         static void Main(string[] args)
         {
+            bool replMode = false;
+            DuckProgramControl program = new DuckProgramControl();
+
             if (args.Length < 1)
             {
-                usage(args);
-                Environment.Exit(-1);
+                replMode = true;
+                program.LineList = new List<string>();
+                program.LineList.Add("");
+            }
+
+            else {
+                string file = args[0];
+
+                program.loadProgram(file);
+
             }
 
 
-            DuckProgramControl program = new DuckProgramControl();
-            string file = args[0];
-
-            program.loadProgram(file);
             Tokenizer scanner = new Tokenizer(program.LineList);
 
             program.GlobalList["[ARGV]"] = args.ToList();
 
-            while (program.EIP < program.LineList.Count && program.EIP >= 0)
+            while (replMode || (program.EIP < program.LineList.Count && program.EIP >= 0))
             {
 
 
@@ -45,7 +52,11 @@ namespace Duck.Net
                 //    program.EIP++;
                 //    continue;
                 //}
-
+                if (replMode) {
+                    Console.Write("DUCK> ");
+                    program.EIP = 0;
+                    program.LineList[program.EIP] = Console.ReadLine();
+                }
                 lbl = program.catchLabel(program.LineList[program.EIP]);
                 if (!String.IsNullOrEmpty(lbl))
                 {
