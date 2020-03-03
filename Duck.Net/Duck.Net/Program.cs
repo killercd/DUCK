@@ -42,7 +42,7 @@ namespace Duck.Net
                 string iteratorListName;
                 //string procedureName;
 
-                List<string> splt = new List<string>();
+               
 
                 //scanner.nextLine();
                 //Token token = scanner.getNextToken(LexerAction.CONSUME_TOKEN);
@@ -89,189 +89,219 @@ namespace Duck.Net
                     program.EIP++;
                     continue;
                 }
-                //end of express mode
+                //Extract action
+                String action = "";
+                String ln = "";
+                if (program.LineList[program.EIP].Length > 0) {
+                    ln = program.LineList[program.EIP];
+                    ln = ln.TrimStart();
+                    action = ln.Substring(0, ln.IndexOf(' '));
+                    ln = ln.Substring(ln.IndexOf(' ') + 1);
+                    ln = ln.TrimStart();
 
-                splt = new List<string>(program.LineList[program.EIP].Split('_'));
-
-                if (splt.Count() <= 0)
+                }
+                else
                 {
                     program.EIP++;
                     continue;
                 }
 
-                else if (splt[0] == "prnt")
+                List<String> actionList = new List<string>();
+                actionList.Add("NOP");
+                actionList.AddRange(ln.Split('_').ToList());
+
+
+                if (actionList.Count() <= 1)
                 {
-                    program.subPrint(splt, false);
+                    program.EIP++;
+                    continue;
+                }
+
+                
+
+                if (action == "prnt")
+                {
+                    program.subPrint(ln, false);
                     program.EIP++;
                 }
-                else if (splt[0] == "prntnl")
+                else if (action == "print")
                 {
-                    program.subPrint(splt, true);
+                    program.subPrint(ln, false);
                     program.EIP++;
                 }
-                else if (splt[0] == "goto")
+                else if (action == "printnl")
                 {
-                    program.EIP = program.subGoto(splt);
+                    program.subPrint(ln, true);
+                    program.EIP++;
                 }
-                else if (splt[0] == "==")
+                else if (action == "prntnl")
+                {
+                    program.subPrint(ln, true);
+                    program.EIP++;
+                }
+                else if (action == "goto")
+                {
+                    program.EIP = program.subGoto(actionList);
+                }
+                else if (action == "==")
                 {
                     bool ipChanged = false;
-                    program.EIP = program.compareFunction(splt, ref ipChanged, "==");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, "==");
                     if (!ipChanged)
                         program.EIP++;
                 }
-                else if (splt[0] == "!=")
+                else if (action == "!=")
                 {
                     bool ipChanged = false;
 
-                    program.EIP = program.compareFunction(splt, ref ipChanged, "!=");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, "!=");
                     if (!ipChanged)
                         program.EIP++;
                 }
-                else if (splt[0] == ">")
+                else if (action == ">")
                 {
                     bool ipChanged = false;
 
-                    program.EIP = program.compareFunction(splt, ref ipChanged, ">");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, ">");
                     if (!ipChanged)
                         program.EIP++;
                 }
-                else if (splt[0] == ">=")
+                else if (action == ">=")
                 {
                     bool ipChanged = false;
 
-                    program.EIP = program.compareFunction(splt, ref ipChanged, ">=");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, ">=");
                     if (!ipChanged)
                         program.EIP++;
                 }
-                else if (splt[0] == "<")
+                else if (action == "<")
                 {
                     bool ipChanged = false;
 
-                    program.EIP = program.compareFunction(splt, ref ipChanged, "<");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, "<");
                     if (!ipChanged)
                         program.EIP++;
                 }
-                else if (splt[0] == "<=")
+                else if (action == "<=")
                 {
                     bool ipChanged = false;
 
-                    program.EIP = program.compareFunction(splt, ref ipChanged, "<=");
+                    program.EIP = program.compareFunction(actionList, ref ipChanged, "<=");
                     if (!ipChanged)
                         program.EIP++;
                 }
 
-                else if (splt[0] == "=")
+                else if (action == "set")
                 {
-                    program.subAssegnamento(splt[1], splt[2]);
+                    program.subAssegnamento(ln);
                     program.EIP++;
                 }
-                else if (splt[0] == "+")
+                else if (action == "+")
                 {
-                    program.subOper(splt, '+');
+                    program.subOper(actionList, '+');
                     program.EIP++;
                 }
-                else if (splt[0] == "-")
+                else if (action == "-")
                 {
-                    program.subOper(splt, '-');
+                    program.subOper(actionList, '-');
                     program.EIP++;
                 }
-                else if (splt[0] == "*")
+                else if (action == "*")
                 {
-                    program.subOper(splt, '*');
+                    program.subOper(actionList, '*');
                     program.EIP++;
                 }
-                else if (splt[0] == "/")
+                else if (action == "/")
                 {
-                    program.subOper(splt, '/');
+                    program.subOper(actionList, '/');
                     program.EIP++;
                 }
-                else if (splt[0] == "%")
+                else if (action == "%")
                 {
-                    program.subOper(splt, '%');
+                    program.subOper(actionList, '%');
                     program.EIP++;
                 }
-                else if (splt[0] == "die")
+                else if (action == "die")
                 {
-                    program.subExit(splt);
+                    program.subExit(actionList);
                     program.EIP++;
                 }
-                else if (splt[0] == "list")
+                else if (action == "list")
                 {
-                    if (splt[1] == "create")
+                    if (actionList[1] == "create")
                     {
-                        program.createList(splt);
+                        program.createList(actionList);
                     }
-                    else if (splt[1] == "size")
+                    else if (actionList[1] == "size")
                     {
-                        program.listSize(splt);
+                        program.listSize(actionList);
                     }
-                    else if (splt[1] == "read")
+                    else if (actionList[1] == "read")
                     {
-                        program.listRead(splt);
+                        program.listRead(actionList);
                     }
-                    else if (splt[1] == "write")
+                    else if (actionList[1] == "write")
                     {
-                        program.listWrite(splt);
+                        program.listWrite(actionList);
                     }
-                    else if (splt[1] == "add")
+                    else if (actionList[1] == "add")
                     {
-                        program.listAdd(splt);
+                        program.listAdd(actionList);
                     }
                     program.EIP++;
                 }
-                else if (splt[0] == "input")
+                else if (action == "input")
                 {
-                    if (splt[1] == "key")
+                    if (actionList[1] == "key")
                     {
-                        program.readFromKeyboad(splt);
+                        program.readFromKeyboad(actionList);
                     }
-                    else if (splt[1] == "textfile")
+                    else if (actionList[1] == "textfile")
                     {
                         //                if(splt[2]=="open"){
                         //                    openFileText(splt, globalVars);
                         //                }else if(splt[2]=="close"){
                         //                    closeFileText(splt, globalVars);
                         //                }
-                        program.loadTextFile(splt);
+                        program.loadTextFile(actionList);
                     }
                     program.EIP++;
                 }
-                else if (splt[0] == "iterator")
+                else if (action == "iterator")
                 {
-                    program.iteratorFunction(splt);
+                    program.iteratorFunction(actionList);
 
                 }
-                else if (splt[0] == "exec")
+                else if (action == "exec")
                 {
-                    program.execFunction(splt);
+                    program.execFunction(actionList);
                     program.EIP++;
 
                 }
-                else if(splt[0] == "$$")
+                else if(action == "$$")
                 {
-                    program.shell(splt);
+                    program.shell(actionList);
                     program.EIP++;
 
                 }
               
 
-                else if (splt[0] == "str")
+                else if (action == "str")
                 {
-                    if (splt[1] == "find") {
-                        program.findString(splt);
+                    if (actionList[1] == "find") {
+                        program.findString(actionList);
                     }
-                    else if (splt[1] == "regexsplit")
+                    else if (actionList[1] == "regexsplit")
                     {
-                        program.regexSplit(splt);
+                        program.regexSplit(actionList);
                     }
-                    else if (splt[1] == "append")
+                    else if (actionList[1] == "append")
                     {
-                        program.stringAppend(splt);
+                        program.stringAppend(actionList);
                     }
-                    else if (splt[1] == "tolist")
+                    else if (actionList[1] == "tolist")
                     {
-                        program.stringToList(splt);
+                        program.stringToList(actionList);
                     }
                     program.EIP++;
 

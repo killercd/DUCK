@@ -115,7 +115,7 @@ namespace Duck.Net
                         Token destinationTokenVar = stack.Pop();
                         String destinationVar = destinationTokenVar.Value;
 
-                        subAssegnamento(destinationVar, sourceVar);
+                        subAssegnamento(String.Format("{0}={1}",destinationVar,sourceVar));
                         return;
 
                     }
@@ -277,10 +277,14 @@ namespace Duck.Net
             
         }
 
-        public void subAssegnamento(String destinazione, String sorgente)
+        public void subAssegnamento(String line)
         {
             String methodName = "subAssegnamento";
-
+            String sorgente = "";
+            String destinazione = "";
+            string[] terms = line.Split('=');
+            sorgente = terms[1].Trim();
+            destinazione = terms[0].Trim();
             try
             {
 
@@ -599,7 +603,7 @@ namespace Duck.Net
             }
         }
 
-        public void subPrint(List<String> lineIstruction, bool endLine)
+        public void subPrint(String toWrite, bool endLine)
         {
 
             String methodName = "subPrint";
@@ -609,9 +613,9 @@ namespace Duck.Net
 
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
-                if (lineIstruction.Count > 1)
+                if (toWrite.Length > 0)
                 {
-                    string input = lineIstruction[1];
+                    string input = toWrite;
                     if (Helper.isString(input))
                     { //start of string match
                         input = Helper.extractStringContent(input);
@@ -758,7 +762,7 @@ namespace Duck.Net
 
 
 
-                subAssegnamento(varName, result.ToString());
+                subAssegnamento(String.Format("{0}={1}", varName, result.ToString()));
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
@@ -818,7 +822,7 @@ namespace Duck.Net
 
                 log.Info(String.Format("{0} - {1} START", this.GetType().Name, methodName));
 
-                subAssegnamento(lineIstruction[2], this.GetList(lineIstruction[3]).Count.ToString());
+                subAssegnamento(String.Format("{0}={1}", lineIstruction[2], this.GetList(lineIstruction[3]).Count.ToString()));
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
@@ -852,7 +856,7 @@ namespace Duck.Net
                     inx = Int32.Parse(listIndex);
 
 
-                subAssegnamento(varAssegnamento, Helper.trasformToString(this.GetList(listName)[inx]));
+                subAssegnamento(String.Format("{0}={1}", varAssegnamento,Helper.trasformToString(this.GetList(listName)[inx])));
 
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
@@ -929,9 +933,9 @@ namespace Duck.Net
                 string tmpInput = Console.ReadLine();
 
                 if(!Helper.isNumber(tmpInput))
-                    subAssegnamento(varName, Helper.trasformToString(tmpInput));
+                    subAssegnamento(String.Format("{0}={1}", varName, Helper.trasformToString(tmpInput)));
                 else
-                    subAssegnamento(varName, tmpInput);
+                    subAssegnamento(String.Format("{0}={1}", varName, tmpInput));
 
                 log.Info(String.Format("{0} - {1} END", this.GetType().Name, methodName));
             }
